@@ -163,9 +163,12 @@
     font-size: 22vw;
     font-weight: 900;
     text-transform: uppercase;
-    animation: flash 0.4s infinite steps(2, end);
+    /* ultra-fast strobe + jitter; text uses difference to always contrast */
+    animation: flashText 0.1s infinite steps(2, end), jitter 0.12s infinite steps(2, end);
     letter-spacing: 2vw;
-    text-shadow: 0 0 10px #fff, 0 0 20px #fff;
+    color: #fff;
+    mix-blend-mode: difference;
+    text-shadow: 0 0 8px #fff, 0 0 24px #fff, 0 0 48px #fff;
   }
   .idle {
     opacity: 0.6;
@@ -219,17 +222,54 @@
     opacity: 0.5;
   }
 
-  @keyframes flash {
-    0% { background: #000; color: #fff; }
-    50% { background: #fff; color: #000; }
-    100% { background: #000; color: #fff; }
-  }
+  /* JOKE MODE: insane rainbow spinner background with strobe */
   .is-joke {
-    animation: bg 0.4s infinite steps(2, end);
+    position: relative;
+    overflow: hidden;
+    --angle: 0deg;
+    animation: strobe 0.08s infinite steps(2, end);
   }
-  @keyframes bg {
-    0% { background: #000; }
-    50% { background: #fff; }
-    100% { background: #000; }
+  .is-joke::before,
+  .is-joke::after {
+    content: '';
+    position: absolute;
+    inset: -25%;
+    pointer-events: none;
+  }
+  /* primary rainbow spinner */
+  .is-joke::before {
+    background: conic-gradient(from var(--angle),
+      #ff004c, #ff8000, #ffe600, #2bff00, #00fff2, #0066ff, #a600ff, #ff004c);
+    animation: spinHue 0.6s linear infinite;
+    filter: saturate(150%) contrast(180%) brightness(120%);
+    transform: scale(1.2);
+  }
+  /* secondary overlay of hard stripes spinning the other way for extra chaos */
+  .is-joke::after {
+    background: repeating-linear-gradient(45deg,
+      rgba(255,255,255,0.25) 0 10px,
+      rgba(0,0,0,0.25) 10px 20px);
+    mix-blend-mode: difference;
+    animation: spinReverse 0.9s linear infinite;
+  }
+
+  @keyframes spinHue {
+    to { --angle: 360deg; }
+  }
+  @keyframes spinReverse {
+    from { transform: rotate(0deg) scale(1.3); }
+    to { transform: rotate(-360deg) scale(1.3); }
+  }
+  @keyframes strobe {
+    0% { filter: brightness(0.8); }
+    100% { filter: brightness(1.6); }
+  }
+  @keyframes flashText {
+    0% { text-shadow: 0 0 6px #fff, 0 0 18px #fff, 0 0 36px #fff; }
+    100% { text-shadow: 0 0 16px #fff, 0 0 36px #fff, 0 0 72px #fff; }
+  }
+  @keyframes jitter {
+    0% { transform: translate(-1vw, 0) skewX(1deg); }
+    100% { transform: translate(1vw, 0) skewX(-1deg); }
   }
 </style>
