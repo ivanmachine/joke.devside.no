@@ -17,9 +17,6 @@ RUN yarn install --frozen-lockfile --production
 # Copy the built application
 COPY --from=build /app/build ./build
 
-# Copy .env if provided at build time (optional). In most setups, you'll provide env at runtime.
-COPY .env ./.env
-
 # Expose the port the app runs on
 EXPOSE 3000
 
