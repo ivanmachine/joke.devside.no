@@ -1,0 +1,23 @@
+name: 🦖 Deploy joke.devside.no
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  deploy-frontend:
+    name: 🍜 Deploy joke shit thing to do_server VPS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull latest container, and restart it
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.DO_VPS_IP }} # VPS IP address from GitHub Secrets
+          username: "root" # VPS username from GitHub Secrets
+          password: ${{ secrets.DO_VPS_PASSWORD }}
+          port: 22 # SSH port (default is 22)
+          script: |
+            docker pull ivanmachine/joke.devside.no:latest
+            docker stop joke.devside.no || true  # stop existing container if running
+            docker rm joke.devside.no || true    # remove existing container if exists
+            docker run -d --name joke.devside.no -p 4130:3000 ivanmachine/joke.devside.no:latest
