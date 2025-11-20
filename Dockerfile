@@ -24,4 +24,4 @@ EXPOSE 3000
 ENV PORT=3000
 
 # Start the application after loading environment variables
-CMD ["node", "-r", "dotenv/config", "build/index.js"]
+CMD ["node", "build/index.js"]
